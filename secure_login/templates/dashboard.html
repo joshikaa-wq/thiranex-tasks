@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+
+    <div class="card shadow border-0 mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="avatar-circle">{{ user['username'][0].upper() }}</div>
+          <div>
+            <h4 class="mb-0 fw-bold">Hello, {{ user['username'] }}! 👋</h4>
+            <small class="text-muted">{{ user['email'] }}</small>
+          </div>
+        </div>
+        <hr/>
+        <div class="row g-3 text-center">
+          <div class="col-6">
+            <div class="stat-box bg-success-subtle rounded p-3">
+              <i class="fa fa-lock fa-lg text-success"></i>
+              <div class="fw-bold mt-1">Session Active</div>
+              <small class="text-muted">You are logged in</small>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-box bg-{{ 'warning' if user['tfa_enabled'] else 'danger' }}-subtle rounded p-3">
+              <i class="fa fa-mobile-screen fa-lg text-{{ 'warning' if user['tfa_enabled'] else 'danger' }}"></i>
+              <div class="fw-bold mt-1">2FA</div>
+              <small class="text-muted">{{ 'Enabled ✅' if user['tfa_enabled'] else 'Disabled ❌' }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow border-0">
+      <div class="card-body p-4">
+        <h6 class="fw-bold mb-3"><i class="fa fa-gears me-2 text-success"></i>Account Settings</h6>
+        {% if not user['tfa_enabled'] %}
+          <a href="{{ url_for('setup_2fa') }}" class="btn btn-outline-success w-100 mb-2">
+            <i class="fa fa-qrcode me-2"></i>Enable Two-Factor Authentication (2FA)
+          </a>
+        {% else %}
+          <form method="POST" action="{{ url_for('disable_2fa') }}"
+                onsubmit="return confirm('Are you sure you want to disable 2FA?')">
+            <button type="submit" class="btn btn-outline-danger w-100 mb-2">
+              <i class="fa fa-shield-xmark me-2"></i>Disable 2FA
+            </button>
+          </form>
+        {% endif %}
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary w-100">
+          <i class="fa fa-right-from-bracket me-2"></i>Logout
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
